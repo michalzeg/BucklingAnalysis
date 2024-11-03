@@ -1,0 +1,91 @@
+<form [formGroup]="geometryForm" (ngSubmit)="onSubmit()">
+  <div class="grid">
+    <div class="col-4 flex justify-content-start align-items-center">
+      <h4>Flange Thickness:</h4>
+    </div>
+    <div class="col-6 flex justify-content-start align-items-center">
+        <p-inputNumber [showButtons]="true" inputId="flangeThickness" formControlName="flangeThickness" />
+    </div>
+    <div class="col-2 flex justify-content-start align-items-center">
+      <h4>[mm]</h4>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="col-4 flex justify-content-start align-items-center">
+      <h4>Web Thickness:</h4>
+    </div>
+    <div class="col-6 flex justify-content-start align-items-center">
+        <p-inputNumber [showButtons]="true" inputId="webThickness" formControlName="webThickness" />
+    </div>
+    <div class="col-2 flex justify-content-start align-items-center">
+      <h4>[mm]</h4>
+    </div>
+  </div>
+
+
+  <div class="grid">
+    <div class="col-4 flex justify-content-start align-items-center">
+      <h4>Height:</h4>
+    </div>
+    <div class="col-6 flex justify-content-start align-items-center">
+        <p-inputNumber [showButtons]="true" inputId="height" formControlName="height" />
+    </div>
+    <div class="col-2 flex justify-content-start align-items-center">
+      <h4>[mm]</h4>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="col-4 flex justify-content-start align-items-center">
+      <h4>Width:</h4>
+    </div>
+    <div class="col-6 flex justify-content-start align-items-center">
+        <p-inputNumber [showButtons]="true" inputId="v" formControlName="width"/>
+    </div>
+    <div class="col-2 flex justify-content-start align-items-center">
+      <h4>[mm]</h4>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="col-4 flex justify-content-start align-items-center">
+      <h4>Length:</h4>
+    </div>
+    <div class="col-6 flex justify-content-start align-items-center">
+        <p-inputNumber [showButtons]="true" inputId="length" formControlName="length" />
+    </div>
+    <div class="col-2 flex justify-content-start align-items-center">
+      <h4>[mm]</h4>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="col-4 flex justify-content-start align-items-center">
+      <h4>Uniform Load:</h4>
+    </div>
+    <div class="col-6 flex justify-content-start align-items-center">
+        <p-inputNumber [showButtons]="true" inputId="uniformLoad" formControlName="uniformLoad" />
+    </div>
+    <div class="col-2 flex justify-content-start align-items-center">
+      <h4>[kN/m<sup>2</sup>]</h4>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="col-4 flex justify-content-start align-items-center">
+      <h4>Imperfection:</h4>
+    </div>
+    <div class="col-6 flex justify-content-start align-items-center">
+        <p-inputNumber [showButtons]="true" inputId="imperfection" formControlName="imperfection" />
+    </div>
+    <div class="col-2 flex justify-content-start align-items-center">
+      <h4>[mm]</h4>
+    </div>
+  </div>
+
+  <p-button type="submit" label="Submit" icon="pi pi-check" [disabled]="geometryForm.invalid"/>
+</form>
+<div>
+  <app-drawing></app-drawing>
+</div>

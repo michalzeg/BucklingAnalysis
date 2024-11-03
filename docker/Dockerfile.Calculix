@@ -1,0 +1,43 @@
+
+FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
+WORKDIR /app
+RUN apt-get update && \
+    apt-get install -y dos2unix && \
+    apt-get install -y calculix-ccx
+
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS restore
+ARG PROJECT_NAME
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+COPY ["Shared/Shared.csproj", "Shared/Shared.csproj"]
+COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/Infrastructure.csproj"]
+COPY ["CalculationActivities/CalculationActivities.csproj", "CalculationActivities/CalculationActivities.csproj"]
+COPY ${PROJECT_NAME}/${PROJECT_NAME}.csproj ${PROJECT_NAME}/${PROJECT_NAME}.csproj
+RUN dotnet restore "./${PROJECT_NAME}/${PROJECT_NAME}.csproj"
+
+
+FROM restore AS build
+ARG PROJECT_NAME
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+COPY ["Shared", "Shared"]
+COPY ["Infrastructure", "Infrastructure"]
+COPY ["CalculationActivities", "CalculationActivities"]
+COPY ${PROJECT_NAME} ${PROJECT_NAME}
+RUN dotnet build "./${PROJECT_NAME}/${PROJECT_NAME}.csproj" --no-restore -c $BUILD_CONFIGURATION -o /app/build
+
+
+FROM build AS publish
+ARG PROJECT_NAME
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./${PROJECT_NAME}/${PROJECT_NAME}.csproj" -c $BUILD_CONFIGURATION --no-restore -o /app/publish /p:UseAppHost=false
+
+
+FROM base AS final
+ARG PROJECT_NAME
+ENV PROJECT_NAME=$PROJECT_NAME
+WORKDIR /app
+USER $APP
+COPY --from=publish /app/publish .
+ENTRYPOINT dotnet ${PROJECT_NAME}.dll

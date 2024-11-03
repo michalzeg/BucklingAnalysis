@@ -1,0 +1,325 @@
+version: "3.4"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    expose:
+      - 5672
+      - 15672
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: always
+
+  redis:
+    hostname: redis
+    image: redis:7.4-bookworm
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    expose:
+      - 6379
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  dashboard:
+    image: dashboard
+    build:
+      context: ../src/
+      dockerfile: ../docker/Dockerfile.Node
+      args:
+        PROJECT_NAME: Dashboard.Server
+        CLIENT_NAME: dashboard.client
+    environment:
+      - WAIT_HOSTS=rabbitmq:5672
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOSTS_TIMEOUT=300
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__VirtualHost=/
+      - RABBITMQ__Username=guest
+      - RABBITMQ__Password=guest
+      - RABBITMQ__Port=5672
+      - WEB_STORAGE_URL=web_storage:8080
+      - REDIS__CONNECTION=redis
+    ports:
+      - "5200:8080"
+    depends_on:
+      - rabbitmq
+      - redis
+
+  saga_coordinator:
+    build:
+      context: ../src/
+      dockerfile: ../docker/Dockerfile.Worker
+      args:
+        PROJECT_NAME: SagaCoordinator
+    environment:
+      - WAIT_HOSTS=rabbitmq:5672
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOSTS_TIMEOUT=300
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__VirtualHost=/
+      - RABBITMQ__Username=guest
+      - RABBITMQ__Password=guest
+      - RABBITMQ__Port=5672
+      - WEB_STORAGE_URL=web_storage:8080
+      - REDIS__CONNECTION=redis
+    depends_on:
+      - rabbitmq
+      - redis
+
+  triangulator_worker:
+    build:
+      context: ../src/
+      dockerfile: ../docker/Dockerfile.Worker
+      args:
+        PROJECT_NAME: TriangulatorWorker
+    environment:
+      - WAIT_HOSTS=rabbitmq:5672
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOSTS_TIMEOUT=300
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__VirtualHost=/
+      - RABBITMQ__Username=guest
+      - RABBITMQ__Password=guest
+      - RABBITMQ__Port=5672
+      - WEB_STORAGE_URL=web_storage:8080
+      - REDIS__CONNECTION=redis
+    depends_on:
+      - rabbitmq
+      - redis
+
+  structure_generator_worker:
+    build:
+      context: ../src/
+      dockerfile: ../docker/Dockerfile.Worker
+      args:
+        PROJECT_NAME: StructureGeneratorWorker
+    environment:
+      - WAIT_HOSTS=rabbitmq:5672
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOSTS_TIMEOUT=300
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__VirtualHost=/
+      - RABBITMQ__Username=guest
+      - RABBITMQ__Password=guest
+      - RABBITMQ__Port=5672
+      - WEB_STORAGE_URL=web_storage:8080
+      - REDIS__CONNECTION=redis
+    depends_on:
+      - rabbitmq
+      - redis
+
+  facade_generator_worker:
+    build:
+      context: ../src/
+      dockerfile: ../docker/Dockerfile.Worker
+      args:
+        PROJECT_NAME: FacadeGeneratorWorker
+    environment:
+      - WAIT_HOSTS=rabbitmq:5672
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOSTS_TIMEOUT=300
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__VirtualHost=/
+      - RABBITMQ__Username=guest
+      - RABBITMQ__Password=guest
+      - RABBITMQ__Port=5672
+      - WEB_STORAGE_URL=web_storage:8080
+      - REDIS__CONNECTION=redis
+    depends_on:
+      - rabbitmq
+      - redis
+
+  calculix_input_generator_worker:
+    build:
+      context: ../src/
+      dockerfile: ../docker/Dockerfile.Calculix
+      args:
+        PROJECT_NAME: CalculixInputGeneratorWorker
+    environment:
+      - WAIT_HOSTS=rabbitmq:5672
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOSTS_TIMEOUT=300
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__VirtualHost=/
+      - RABBITMQ__Username=guest
+      - RABBITMQ__Password=guest
+      - RABBITMQ__Port=5672
+      - WEB_STORAGE_URL=web_storage:8080
+      - CALCULIXWORKINGDIRECTORY=/calculix
+      - REDIS__CONNECTION=redis
+    volumes:
+      - calculix_data:/calculix
+    depends_on:
+      - rabbitmq
+      - redis
+
+  calculix_solver_worker:
+    build:
+      context: ../src/
+      dockerfile: ../docker/Dockerfile.Calculix
+      args:
+        PROJECT_NAME: CalculixSolverWorker
+    environment:
+      - OMP_NUM_THREADS=1 # number of calculix threads
+      - WAIT_HOSTS=rabbitmq:5672
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOSTS_TIMEOUT=300
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__VirtualHost=/
+      - RABBITMQ__Username=guest
+      - RABBITMQ__Password=guest
+      - RABBITMQ__Port=5672
+      - WEB_STORAGE_URL=web_storage:8080
+      - CALCULIXWORKINGDIRECTORY=/calculix
+      - REDIS__CONNECTION=redis
+    volumes:
+      - calculix_data:/calculix
+    depends_on:
+      - rabbitmq
+      - redis
+
+  calculix_result_parser_worker:
+    build:
+      context: ../src/
+      dockerfile: ../docker/Dockerfile.Calculix
+      args:
+        PROJECT_NAME: CalculixResultParserWorker
+    environment:
+      - WAIT_HOSTS=rabbitmq:5672
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOSTS_TIMEOUT=300
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__VirtualHost=/
+      - RABBITMQ__Username=guest
+      - RABBITMQ__Password=guest
+      - RABBITMQ__Port=5672
+      - WEB_STORAGE_URL=web_storage:8080
+      - CALCULIXWORKINGDIRECTORY=/calculix
+      - REDIS__CONNECTION=redis
+    volumes:
+      - calculix_data:/calculix
+    depends_on:
+      - rabbitmq
+      - redis
+
+  result_filter_worker:
+    build:
+      context: ../src/
+      dockerfile: ../docker/Dockerfile.Worker
+      args:
+        PROJECT_NAME: ResultFilterWorker
+    environment:
+      - WAIT_HOSTS=rabbitmq:5672
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOSTS_TIMEOUT=300
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__VirtualHost=/
+      - RABBITMQ__Username=guest
+      - RABBITMQ__Password=guest
+      - RABBITMQ__Port=5672
+      - WEB_STORAGE_URL=web_storage:8080
+      - REDIS__CONNECTION=redis
+    depends_on:
+      - rabbitmq
+      - redis
+
+  buckling_shape_normalization_worker:
+    build:
+      context: ../src/
+      dockerfile: ../docker/Dockerfile.Worker
+      args:
+        PROJECT_NAME: BucklingShapeNormalizationWorker
+    environment:
+      - WAIT_HOSTS=rabbitmq:5672
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOSTS_TIMEOUT=300
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__VirtualHost=/
+      - RABBITMQ__Username=guest
+      - RABBITMQ__Password=guest
+      - RABBITMQ__Port=5672
+      - WEB_STORAGE_URL=web_storage:8080
+      - REDIS__CONNECTION=redis
+    depends_on:
+      - rabbitmq
+      - redis
+
+  imperfection_generator_worker:
+    build:
+      context: ../src/
+      dockerfile: ../docker/Dockerfile.Worker
+      args:
+        PROJECT_NAME: ImperfectionGeneratorWorker
+    environment:
+      - WAIT_HOSTS=rabbitmq:5672
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOSTS_TIMEOUT=300
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__VirtualHost=/
+      - RABBITMQ__Username=guest
+      - RABBITMQ__Password=guest
+      - RABBITMQ__Port=5672
+      - WEB_STORAGE_URL=web_storage:8080
+      - REDIS__CONNECTION=redis
+    depends_on:
+      - rabbitmq
+      - redis
+
+  web_storage:
+    build:
+      context: ../src/
+      dockerfile: ../docker/Dockerfile.Api
+      args:
+        PROJECT_NAME: WebStorage
+    expose:
+      - 8080
+    mem_limit: 200M
+    ports:
+      - "5201:8080"
+    environment:
+      - WAIT_HOSTS=rabbitmq:5672
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOSTS_TIMEOUT=300
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - RABBITMQ__HOST=rabbitmq
+      - RABBITMQ__VirtualHost=/
+      - RABBITMQ__Username=guest
+      - RABBITMQ__Password=guest
+      - RABBITMQ__Port=5672
+      - REDIS__CONNECTION=redis
+    depends_on:
+      - rabbitmq
+      - redis
+    volumes:
+      - storage_data:/storage
+
+volumes:
+  calculix_data:
+  redis_data:
+  storage_data:

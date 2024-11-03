@@ -1,0 +1,45 @@
+<div>
+  <div class="grid">
+    <div class="col-4 flex justify-content-start align-items-center">
+      <h4>Analysis</h4>
+    </div>
+    <div class="col-8 flex justify-content-start align-items-center">
+      <div class="field-checkbox mr-2">
+        <p-radioButton [inputId]="'linear'" name="category" [value]="'linear'" [(ngModel)]="selectedAnalysisType"(onClick)="analysisTypeChanged()" [disabled]="linearDisabled"/>
+        <label [for]="'linear'" class="ml-2">linear</label>
+      </div>
+      <div class="field-checkbox mr-2">
+        <p-radioButton [inputId]="'buckling'" name="category" [value]="'buckling'" [(ngModel)]="selectedAnalysisType"(onClick)="analysisTypeChanged()" [disabled]="bucklingDisabled"/>
+        <label [for]="'buckling'" class="ml-2">buckling</label>
+      </div>
+      <div class="field-checkbox mr-2">
+        <p-radioButton [inputId]="'non-linear'" name="category" [value]="'non-linear'" [(ngModel)]="selectedAnalysisType"(onClick)="analysisTypeChanged()" [disabled]="nonLinearDisabled"/>
+        <label [for]="'non-linear'" class="ml-2">non-linear</label>
+      </div>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="col-4 flex justify-content-start align-items-center">
+      <h4>Mesh</h4>
+    </div>
+    <div class="col-8 flex justify-content-start align-items-center">
+      <p-inputSwitch [(ngModel)]="meshModel" (onChange)="meshChecked()" />
+    </div>
+  </div>
+  <div class="grid">
+    <div class="col-4 flex justify-content-start align-items-center">
+      <h4>Stress</h4>
+    </div>
+    <div class="col-8 flex justify-content-start align-items-center">
+      <div class="flex-grow-1">
+        <p-dropdown [options]="stressTypes" [(ngModel)]="selectedStressType" (onChange)="stressTypeChanged()"
+          [style]="{'width':'100%'}" [disabled]="stressDisabled"/>
+      </div>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="col-12">
+      <app-summary></app-summary>
+    </div>
+  </div>
+</div>

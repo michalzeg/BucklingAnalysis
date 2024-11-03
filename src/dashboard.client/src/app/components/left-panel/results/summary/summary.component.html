@@ -1,0 +1,18 @@
+<ng-container *ngIf="visible">
+  <p-table [value]="extremes" [styleClass]="'p-datatable-sm'">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Type</th>
+            <th>Max</th>
+            <th>Min</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-extreme>
+        <tr>
+            <td>{{ extreme.type }}</td>
+            <td>{{ extreme.max | number: '1.2-2' }}</td>
+            <td>{{ extreme.min | number: '1.2-2'}}</td>
+        </tr>
+    </ng-template>
+  </p-table>
+</ng-container>

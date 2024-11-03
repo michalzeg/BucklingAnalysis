@@ -1,0 +1,21 @@
+/* You can add global styles to this file, and also import other style files */
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+@import "/node_modules/primeflex/primeflex.css";
+@import "node_modules/@fortawesome/fontawesome-free/css/all.min.css";
+@import "primeicons/primeicons.css";
+
+body, html {
+  background-color: var(--surface-ground);
+  height: 100vh;
+  margin: 0;
+    padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.p-tag .p-tag-icon{
+  margin-right: 0px !important;
+}

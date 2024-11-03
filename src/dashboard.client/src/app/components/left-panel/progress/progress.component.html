@@ -1,0 +1,32 @@
+<div>
+  <p-table [value]="activityProgress" [tableStyle]="{ 'min-width': '100%' }">
+    <ng-template pTemplate="header">
+      <tr>
+        <th></th>
+        <th>Activity Name</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-product>
+      <tr [ngClass]="{'chart-row': (product.type === 'RunLinearAnalysisActivity' || product.type === 'RunNonLinearAnalysisActivity') && product.state === 'ongoing'}">
+        <td>
+          <ng-container *ngIf="product.state === 'done'">
+            <p-tag icon="pi pi-check" severity="success" [rounded]="true" />
+          </ng-container>
+          <ng-container *ngIf="product.state === 'ongoing'">
+            <p-tag icon="pi pi-spin pi-cog" severity="warning" [rounded]="true" />
+          </ng-container>
+          <ng-container *ngIf="product.state === 'waiting'">
+            <p-tag icon="pi pi-stopwatch" severity="secondary" [rounded]="true" />
+          </ng-container>
+          <ng-container *ngIf="product.state === 'downloading'">
+            <p-tag icon="pi pi-sync pi-spin" severity="info" [rounded]="true" />
+          </ng-container>
+        </td>
+        <td>{{ product.displayName }}</td>
+      </tr>
+      <tr *ngIf="(product.type === 'RunLinearAnalysisActivity' || product.type === 'RunNonLinearAnalysisActivity') && product.state === 'ongoing'">
+        <td colspan="2"><app-iteration-chart [progress]="linearAnalysisCalculixProgress" ></app-iteration-chart></td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

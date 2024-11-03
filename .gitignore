@@ -1,0 +1,9 @@
+bin
+obj
+/src/dashboard.client/dist
+/src/dashboard.client/node_modules
+/src/dashboard.client/.angular
+/src/dashboard.client/.nx
+/src/dashboard.client/.vscode
+*.user
+/*.bak

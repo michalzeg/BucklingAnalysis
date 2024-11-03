@@ -1,0 +1,11 @@
+<div class="legend" *ngIf="visible">
+  <div class="flex">
+    <div class="gradient-map" [ngStyle]="{'background': gradient}">
+    </div>
+    <div class="flex justify-content-between flex-column mx-1">
+      <div>{{max | number: '1.2-2'}}</div>
+      <div>{{middle | number: '1.2-2'}}</div>
+      <div>{{min | number: '1.2-2'}}</div>
+    </div>
+  </div>
+</div>
