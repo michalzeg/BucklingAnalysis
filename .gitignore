@@ -7,3 +7,4 @@ obj
 /src/dashboard.client/.vscode
 *.user
 /*.bak
+/.vs
