@@ -23,6 +23,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workers", "Workers", "{515E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0FBAF3B6-0A81-48CB-844D-EF11CFC122F6}"
 	ProjectSection(SolutionItems) = preProject
+		docker\docker-compose.yml = docker\docker-compose.yml
+		docker\Dockerfile.Api = docker\Dockerfile.Api
+		docker\Dockerfile.Calculix = docker\Dockerfile.Calculix
+		docker\Dockerfile.Node = docker\Dockerfile.Node
+		docker\Dockerfile.Worker = docker\Dockerfile.Worker
 		run.ps1 = run.ps1
 	EndProjectSection
 EndProject
