@@ -13,7 +13,7 @@ using CalculixResultParserWorker.ResultLineParser;
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddScoped<ICalculixFileManager, CalculixFileManager>();
 builder.Services.AddScoped<IActivityHandler, ActivityHandler>();
-builder.Services.AddScoped<IResultLineParser, RegexLineParser>();
+builder.Services.AddScoped<IResultLineParser, SpanLineParser>();
 builder.Services.TryAddEnumerable(ServiceDescriptor.Scoped<ICalculixFileParser, BucklingAnalysisCalculixFileParser>());
 builder.Services.TryAddEnumerable(ServiceDescriptor.Scoped<ICalculixFileParser, StaticAnalysisCalculixFileParser>());
 builder.Services.AddMassTransitMultipleActivityConfig(builder.Configuration, cfg =>
